@@ -2,7 +2,7 @@ import pygame
 from pygame.draw import *
 import pygame.font
 from random import randint
-from math import sqrt
+from math import sqrt, sin, cos
 pygame.init()
 pygame.font.init()
 
@@ -22,9 +22,10 @@ CYAN = (0, 255, 255)
 BLACK = (0, 0, 0)
 COLORS = [RED, BLUE, YELLOW, GREEN, MAGENTA, CYAN]
 
+x, y, r, starting_direction, speed, direction, color = 0, 0, 0, 0, 0, 0, 0
 def throw_ball():
     """ Метает шарик """
-    global x, y, r, starting_direction, speed
+    global x, y, r, starting_direction, speed, color
     x = randint(0, xsize)
     y = randint(0, ysize)
     r = randint(10, 40)
@@ -33,11 +34,19 @@ def throw_ball():
     color = COLORS[randint(0, 5)]
     circle(screen, color, (x, y), r)
 
+def move_ball():
+    global x, y, r, direction, speed, color
+    x += int(speed*sin(direction))
+    y += int(speed*cos(direction))
+    circle(screen, color, (x, y), r)
+
 
 throw_ball()
+direction = starting_direction
 clock = pygame.time.Clock()
 finished = False
 points = 0
+started = False
 start_surface = st.render("Click to start", False, (255, 255, 255))
 pts_surface = pts.render('Score: '+str(points), False, (255, 255, 255))
 st_text_rect = start_surface.get_rect()
@@ -58,14 +67,17 @@ while not finished:
                     print("Gotcha!")
                     points += 50//r
                     pts_surface = pts.render('Score: '+str(points), False, (255, 255, 255))
+                    throw_ball()
                 else:
                     points -= 50//r
                     print("Missed this one!")
                     pts_surface = pts.render('Score: '+str(points), False, (255, 255, 255))
-            throw_ball()
-            pygame.display.update()
+                    throw_ball()
+                started = True
 
+    if started:
         screen.fill(BLACK)
         screen.blit(pts_surface, (10, 10))
-
+        move_ball()
+    pygame.display.update()
 pygame.quit()
