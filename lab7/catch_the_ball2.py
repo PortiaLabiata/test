@@ -36,6 +36,10 @@ def throw_ball():
 
 def move_ball():
     global x, y, r, direction, speed, color
+    """
+    if x<=r or y<=r or xsize-x<=r or ysize-x<=r:
+        direction = 180 - direction
+    """
     x += int(speed*sin(direction))
     y += int(speed*cos(direction))
     circle(screen, color, (x, y), r)
