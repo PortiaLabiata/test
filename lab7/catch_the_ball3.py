@@ -28,8 +28,8 @@ class Ball(object):
         self.angle = angle
 
     def move(self, velocity, angle):
-        self.x = int(velocity*sin(angle))
-        self.y = int(velocity*cos(angle))
+        self.x += int(velocity*sin(angle))
+        self.y += int(velocity*cos(angle))
 
     def draw(self):
         circle(screen, self.color, (self.x, self.y), self.r)
