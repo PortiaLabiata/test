@@ -9,7 +9,7 @@ def rotate_vector(v, alpha):
 def rotate_image(img, rect, alpha):
     rot_img = pygame.transform.rotate(img, degrees(alpha))
     rot_rect = rot_img.get_rect(center = rect.center)
-    return rot_img, rot_center
+    return rot_img, rot_rect
 
 class MaterialPoint:
     r0 = np.array([0, 0])
@@ -39,10 +39,11 @@ class MaterialPoint:
 
 class ALM(MaterialPoint, pygame.sprite.Sprite):
     angle = radians(0)
-    main_thrust = np.array([0, 3])
+    main_thrust = np.array([0, -1.5])
     rcs_left_thrust = np.array([1, 0])
     rcs_right_thrust = np.array([-1, 0])
-    angular_velocity = radians(3)
+    angular_velocity = radians(0.1)
+    current_ang_vel = 0
 
 
     def __init__(self, r0, v0, m, dt):
@@ -60,19 +61,21 @@ class ALM(MaterialPoint, pygame.sprite.Sprite):
     def update_coordinates(self):
         MaterialPoint.update_coordinates(self)
         self.rect.center = (self.r[0], self.r[1])
+        self.angle += self.current_ang_vel
 
     def main_stage_thrust(self):
-        self.apply_force(rotate_vector(self.main_thrust, radians(180)-self.angle))
+        self.apply_force(rotate_vector(self.main_thrust, self.angle))
 
     def rotate_clockwise(self):
-        self.angle += self.angular_velocity
-        self.image = pygame.transform.rotate(self.image, self.angle)
+        self.current_ang_vel += self.angular_velocity*1/30
+        self.angle += self.current_ang_vel
 
     def rotate_counterclockwise(self):
-        self.angle -= self.angular_velocity
+        self.current_ang_vel -= self.angular_velocity*1/30
+        self.angle += self.current_ang_vel
 
     def hover_left(self):
-        self.apply_force(rotate_vector(self.rcs_left_thrust, radians(180)-self.angle))
+        self.apply_force(rotate_vector(self.rcs_left_thrust, self.angle))
 
     def hover_right(self):
         self.apply_force(rotate_vector(self.rcs_right_thrust, radians(180)-self.angle))
