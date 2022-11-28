@@ -1,57 +1,35 @@
 import pygame
 from pygame.draw import *
 import pygame.font
+from itertools import count as iter_count
 
-class Text(pygame.sprite.Sprite):
-    # @anchor uses rect position
-    def __init__(self, text, font, color, position, anchor="topleft"):
-        pygame.sprite.Sprite.__init__(self)
-        self._text = text
-        self._font = font
-        self._color = color
-        self._position = position
-        self._anchor = anchor
-        self.render()
-
-    def render(self):
-        self.image = self._font.render(self._text, 1, self._color)
-        self.rect = self.image.get_rect(**{self._anchor: self._position})
-
-class MultiText(pygame.sprite.Sprite):
-    # @anchor uses rect position
-    def __init__(self, texts, font, color, position, anchor="topleft"):
-        pygame.sprite.Sprite.__init__(self)
-        self._texts = texts
-        self._font = font
-        self._color = color
-        self._position = position
-        self._anchor = anchor
-        self.render()
-
-    def render(self):
-        width, height = 0, 0
-        for text in self._texts:
-            height += self._font.get_linesize()
-            w, _ = self._font.size(text)
-            if w > width:
-                width = w
-
-        self.image = pygame.Surface((width, height), pygame.SRCALPHA)
-        self.image.fill((0, 0, 0, 0))
-        self.rect = self.image.get_rect(**{self._anchor: self._position})
-        line = iter_count(0, self._font.get_linesize())
-        for text in self._texts:
-            image = self._font.render(text, 1, self._color)
-            self.image.blit(image, (0, next(line)))
-
-def generate_control_panel(alm):
+def draw_multi_lines(screen, text, x, y):
     font = pygame.font.SysFont(None, 23)
-    panel_string = "V vert.: "+str(round(alm.v[1], 2))+"\nV hor.:"+str(round(alm.v[1], 2))
-    #surface = font.render(panel_string, False, (255, 255, 255))
-    #rect = surface.get_rect()
-    #rect.center = (50, 20)
-    surface = MultiText(panel_string, font, (255, 255, 255), (50, 20))
-    surface.render()
-    return surface, rect
+    for number, line in enumerate(text):
+        surface = font.render(line, False, (255, 255, 255))
+        rect = surface.get_rect()
+        rect.center = (x, y+15*number)
+        screen.blit(surface, rect)
 
 
+def generate_control_panel(screen, alm, terrain, tperc):
+    inter_list = list(zip(*terrain))[1]
+    sea_level = sum(inter_list)/len(inter_list)
+    font = pygame.font.SysFont(None, 23)
+    panel_string = []
+    panel_string.append("V vert.: "+str(round(alm.v[1], 2)))
+    panel_string.append("V hor.: "+str(round(alm.v[0], 2)))
+    panel_string.append("Main fuel: "+str(round(alm.main_fuel, 2)))
+    panel_string.append("RCS fuel: "+str(round(alm.rcs_fuel, 2)))
+    panel_string.append("Alt: "+str(round(sea_level-alm.r[1], 2)))
+    panel_string.append("Angle: "+str(round(alm.angle, 2)))
+    panel_string.append("Ang vel.: "+str(round(alm.current_ang_vel, 3)))
+    panel_string.append("Thrust: "+str(tperc))
+    draw_multi_lines(screen, panel_string, 70, 15)
+
+def draw_big_text(screen, text):
+    font = pygame.font.SysFont(None, 40)
+    surface = font.render(text, False, (255, 255, 255))
+    rect = surface.get_rect()
+    rect.center = (683, 384)
+    screen.blit(surface, rect)

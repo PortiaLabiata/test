@@ -45,7 +45,7 @@ class ALM(MaterialPoint, pygame.sprite.Sprite):
     angular_velocity = radians(0.1)
     current_ang_vel = 0
 
-    main_fuel = 1000
+    main_fuel = 5000
     rcs_fuel = 1000
 
 
@@ -68,7 +68,7 @@ class ALM(MaterialPoint, pygame.sprite.Sprite):
 
     def main_stage_thrust(self, perc):
         self.apply_force(rotate_vector(self.main_thrust*perc/100, self.angle))
-        self.main_fuel -= 0.01
+        #self.main_fuel -= 0.01
 
     def rotate_clockwise(self):
         self.current_ang_vel += self.angular_velocity*1/30
