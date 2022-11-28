@@ -24,7 +24,7 @@ stage_thrust = 0
 
 while not finished:
     clock.tick(FPS)
-    alm.forces = [np.array([0, 0.8])]
+    alm.forces = [np.array([0, alm.m/1.25])]
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
