@@ -66,8 +66,8 @@ class ALM(MaterialPoint, pygame.sprite.Sprite):
         self.rect.center = (self.r[0], self.r[1])
         self.angle += self.current_ang_vel
 
-    def main_stage_thrust(self):
-        self.apply_force(rotate_vector(self.main_thrust, self.angle))
+    def main_stage_thrust(self, perc):
+        self.apply_force(rotate_vector(self.main_thrust*perc/100, self.angle))
         self.main_fuel -= 0.01
 
     def rotate_clockwise(self):
