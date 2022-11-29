@@ -52,8 +52,20 @@ class ALM(MaterialPoint, pygame.sprite.Sprite):
     def __init__(self, r0, v0, m, dt):
         pygame.sprite.Sprite.__init__(self)
         self.r0 = r0
-        self.image = pygame.Surface((32, 32))
-        self.image = pygame.image.load("./ALM.bmp").convert_alpha()
+        self.image = pygame.Surface((45, 45))
+        self.image = pygame.image.load("./ALM_anims/ALM0.bmp").convert_alpha()
+
+        """
+        self.im0 = pygame.image.load("./ALM_anims/ALM0.bmp").convert_alpha()
+        self.im1 = pygame.image.load("./ALM_anims/ALM1.bmp").convert_alpha()
+        self.im2 = pygame.image.load("./ALM_anims/ALM2.bmp").convert_alpha()
+        self.im3 = pygame.image.load("./ALM_anims/ALM3.bmp").convert_alpha()
+        self.im4 = pygame.image.load("./ALM_anims/ALM4.bmp").convert_alpha()
+        self.im_1 = pygame.image.load("./ALM_anims/ALM-1.bmp").convert_alpha()
+        self.im_2 = pygame.image.load("./ALM_anims/ALM-2.bmp").convert_alpha()
+        self.im_3 = pygame.image.load("./ALM_anims/ALM-3.bmp").convert_alpha()
+        """
+
         self.rect = self.image.get_rect(center=(self.r0[0], self.r0[1]))
         self.r = self.r0
         self.v0 = v0
@@ -65,6 +77,15 @@ class ALM(MaterialPoint, pygame.sprite.Sprite):
         MaterialPoint.update_coordinates(self)
         self.rect.center = (self.r[0], self.r[1])
         self.angle += self.current_ang_vel
+        degangle = degrees(self.angle)
+        if degangle >= 360 or degangle <= -360:
+            self.angle = 0
+        """
+        if degangle >= 0 and degangle < 90:
+            self.image = self.im0
+        elif degangle >= 90 and degangle < 180
+        """
+
 
     def main_stage_thrust(self, perc):
         self.apply_force(rotate_vector(self.main_thrust*perc/100, self.angle))

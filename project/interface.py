@@ -2,6 +2,7 @@ import pygame
 from pygame.draw import *
 import pygame.font
 from itertools import count as iter_count
+from math import degrees
 
 def draw_multi_lines(screen, text, x, y):
     font = pygame.font.SysFont(None, 23)
@@ -22,8 +23,8 @@ def generate_control_panel(screen, alm, terrain, tperc):
     panel_string.append("Main fuel: "+str(round(alm.main_fuel, 2)))
     panel_string.append("RCS fuel: "+str(round(alm.rcs_fuel, 2)))
     panel_string.append("Alt: "+str(round(sea_level-alm.r[1], 2)))
-    panel_string.append("Angle: "+str(round(alm.angle, 2)))
-    panel_string.append("Ang vel.: "+str(round(alm.current_ang_vel, 3)))
+    panel_string.append("Angle: "+str(round(degrees(alm.angle), 2)))
+    panel_string.append("Ang vel.: "+str(round(degrees(alm.current_ang_vel), 3)))
     panel_string.append("Thrust: "+str(tperc))
     draw_multi_lines(screen, panel_string, 70, 15)
 

@@ -13,18 +13,30 @@ xsize = 1366
 ysize = 768
 screen = pygame.display.set_mode((xsize, ysize))
 
-pygame.display.update()
+#pygame.display.update()
 clock = pygame.time.Clock()
-paused = False
+paused = True
 finished = False
 
 alm = ph.ALM(np.array([400, 0]), np.array([0, 1]), 1, 1/30)
 terrain = tg.raise_mountains(screen, 0.2)
 stage_thrust = 0
 
+it.draw_big_text(screen, "Press SPACE to begin mission")
+pygame.display.update()
+
+while paused:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            paused = False
+            finished = True
+    keys = pygame.key.get_pressed()
+    if keys[pygame.K_SPACE]:
+        paused = False
+
 while not finished:
     clock.tick(FPS)
-    alm.forces = [np.array([0, alm.m/1.25])]
+    alm.forces = [np.array([0, alm.m/2])]
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -62,12 +74,17 @@ while not finished:
     alm.main_stage_thrust(stage_thrust)
     alm.update_coordinates()
 
+    if alm.r[0] > 1376 or alm.r[0] < -10 or alm.r[1] < -10:
+        print("Mission failed! ALM out of landing area")
+        it.draw_big_text(screen, "Mission failed! ALM out of landing area")
+        paused = True
+
     x, y = alm.rect.center[0], alm.rect.center[1]
     for pixel in terrain:
         screen.set_at(pixel, (255, 255, 255))
         lat, h = pixel[0], pixel[1]
         if sqrt((lat-x)**2+(h-y)**2)<=7:
-            if sqrt(alm.v[0]**2+alm.v[1]**2)>=10:
+            if sqrt(alm.v[0]**2+alm.v[1]**2)>=5:
                 print("Mission failed! ALM crashed")
                 it.draw_big_text(screen, "Mission failed! ALM crashed")
                 paused = True
